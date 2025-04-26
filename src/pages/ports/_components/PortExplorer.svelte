@@ -3,6 +3,7 @@
   import type { PortWithIcons } from "@data/ports";
   import SearchBar from "./SearchBar.svelte";
   import PortGrid from "./PortGrid.svelte";
+  import { onMount } from "svelte";
 
   interface Props {
     ports: Array<PortWithIcons>;
@@ -21,11 +22,17 @@
     includeScore: false,
     threshold: 0.3,
   });
-  const url = new URL(window.location.href);
+  const url = globalThis.window ? new URL(window.location.href) : new URL("http://localhost:4321/ports");
 
   let debounceTimeout: ReturnType<typeof setTimeout> | undefined;
   let searchTerm = $state(url.searchParams.get("q") ?? "");
-  let portGrid: Array<PortWithIcons> | undefined = $state(undefined);
+  let portGrid: Array<PortWithIcons> | undefined = $state(ports);
+
+  let isHydrated: boolean = $state(false);
+
+  onMount(() => {
+    isHydrated = true;
+  });
 
   handleInput();
 
@@ -36,7 +43,9 @@
     } else {
       url.searchParams.set("q", searchTerm);
     }
-    window.history.pushState(null, "", url.toString());
+    if (globalThis.window) {
+      window.history.pushState(null, "", url.toString());
+    }
 
     clearTimeout(debounceTimeout);
     debounceTimeout = setTimeout(() => {
@@ -45,5 +54,5 @@
   }
 </script>
 
-<SearchBar bind:searchTerm {handleInput} />
-<PortGrid {portGrid} {searchTerm} />
+<SearchBar bind:searchTerm hydrated={isHydrated} {handleInput} />
+<PortGrid hydrated={isHydrated} {portGrid} {searchTerm} />

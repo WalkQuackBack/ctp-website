@@ -4,9 +4,10 @@
   interface Props {
     searchTerm: string;
     handleInput: () => void;
+    hydrated: boolean;
   }
 
-  let { searchTerm = $bindable(), handleInput }: Props = $props();
+  let { searchTerm = $bindable(), handleInput, hydrated }: Props = $props();
 </script>
 
 <div class="search-bar">
@@ -18,6 +19,7 @@
     placeholder="Search port or category..."
     autocomplete="off"
     bind:value={searchTerm}
+    disabled={!hydrated}
     oninput={handleInput} />
 </div>
 
@@ -33,6 +35,8 @@
     border-radius: var(--border-radius-normal);
     padding-inline: var(--space-xs);
 
+    transition: opacity 250ms;
+
     input {
       padding: var(--space-sm) 0;
       background-color: inherit;
@@ -43,6 +47,16 @@
       outline: none;
       width: 100%;
       font-size: 2rem;
+    }
+    &:has(> input:disabled) {
+      opacity: 0.5;
+      cursor: not-allowed;
+      :global(> *) {
+        cursor: inherit;
+      }
+      :global(> svg) {
+        opacity: 0.5;
+      }
     }
   }
 

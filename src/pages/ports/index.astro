@@ -20,14 +20,14 @@ import PortCard from "./_components/PortCard.svelte";
   </PageIntro>
 
   <!-- Display ports without search bar for browsers without JavaScript enabled -->
-  <noscript>
+  <!-- <noscript>
     <div class="port-grid">
       {ports.map((port) => <PortCard {port} />)}
     </div>
-  </noscript>
+  </noscript> -->
 
   <!-- TODO: Figure out a better general solution that doesn't involve defining SVGs as Svelte components or passing in nested Svelte 5 snippets/slots -->
-  <PortExplorer {ports} client:only="svelte" />
+  <PortExplorer {ports} client:load />
 </Default>
 
 <style lang="scss" is:global>
@@ -35,9 +35,5 @@ import PortCard from "./_components/PortCard.svelte";
 
   :root {
     --accent-color: var(--peach);
-  }
-
-  .port-grid {
-    @include utils.grid($column: 300px, $gap: var(--space-sm));
   }
 </style>
